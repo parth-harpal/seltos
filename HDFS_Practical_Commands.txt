@@ -1,0 +1,123 @@
+HDFS Practical Commands
+
+1. Create a file in the local file system and add some sample content using echo command:
+echo "This is my sample HDFS practical file" > sample.txt
+
+2. Create a directory in HDFS:
+hdfs dfs -mkdir /mydir
+
+3. Upload the local file to the HDFS directory using different commands:
+hdfs dfs -put sample.txt /mydir
+# OR
+hdfs dfs -copyFromLocal sample.txt /mydir
+
+4. List the contents of the HDFS directory:
+hdfs dfs -ls /mydir
+
+5. Display the contents of the file in HDFS using the -cat command:
+hdfs dfs -cat /mydir/sample.txt
+
+6. Copy the file within HDFS:
+hdfs dfs -cp /mydir/sample.txt /mydir/sample_copy.txt
+
+7. Download the file back to the local system:
+hdfs dfs -get /mydir/sample.txt ./downloaded_sample.txt
+# OR
+hdfs dfs -copyToLocal /mydir/sample.txt ./downloaded_sample.txt
+
+8. Delete the file and directory from HDFS:
+hdfs dfs -rm /mydir/sample.txt
+hdfs dfs -rm /mydir/sample_copy.txt
+hdfs dfs -rmdir /mydir
+
+9. Display complete list of directories and files of HDFS:
+hdfs dfs -ls -R /
+
+
+Q1. Display the fields restaurant_id, name, borough, and cuisine, but exclude _id:
+
+db.restaurant.find(
+  {},
+  { restaurant_id: 1, name: 1, borough: 1, cuisine: 1, _id: 0 }
+)
+
+
+Q2. Display the first 5 restaurants in the borough Bronx:
+
+db.restaurant.find({ borough: "Bronx" }).limit(5)
+
+
+Q3. Find the restaurants that achieved a score more than 90:
+
+db.restaurant.find({ "grades.score": { $gt: 90 } })
+
+
+Q4. Find the restaurants that achieved a score more than 80 but less than 100:
+
+db.restaurant.find({ "grades.score": { $gt: 80, $lt: 100 } })
+
+
+Q5. Find restaurants that do not prepare any cuisine of 'American' and have grade score more than 70 and latitude < -65.754168:
+
+db.restaurant.find({
+  cuisine: { $ne: "American" },
+  "grades.score": { $gt: 70 },
+  "address.coord.0": { $lt: -65.754168 }
+})
+
+
+Q6. Find the restaurants in Bronx that prepare either American or Chinese dishes:
+
+db.restaurant.find({
+  borough: "Bronx",
+  cuisine: { $in: ["American", "Chinese"] }
+})
+
+
+Q7. Arrange the name of the restaurants in ascending order with all columns:
+
+db.restaurant.find().sort({ name: 1 })
+
+
+Q8. Find the count of restaurants for each cuisine:
+
+db.restaurant.aggregate([
+  { $group: { _id: "$cuisine", count: { $sum: 1 } } }
+])
+
+
+Q9. Find the highest score for each cuisine:
+
+db.restaurant.aggregate([
+  { $unwind: "$grades" },
+  { $group: { _id: "$cuisine", highestScore: { $max: "$grades.score" } } }
+])
+
+
+Q10. Find the total number of documents:
+
+db.restaurant.countDocuments()
+
+
+Q11. Display the last two records:
+
+db.restaurant.find().sort({ _id: -1 }).limit(2)
+
+
+Q12. Update the cuisine of a particular restaurant:
+
+db.restaurant.updateOne(
+  { name: "ABC Restaurant" },
+  { $set: { cuisine: "Italian" } }
+)
+
+
+(replace "ABC Restaurant" and "Italian" with actual values you need)
+
+Q13. Delete the restaurant whose cuisine is ‘bakery’:
+
+db.restaurant.deleteMany({ cuisine: "Bakery" })
+
+
+echo "Hello World" | hdfs dfs -appendToFile - /mydir/sample.txt
+
